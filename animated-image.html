@@ -1,0 +1,118 @@
+<link rel="import" href="../polymer/polymer-element.html">
+
+<dom-module id="animated-image">
+  <template>
+  <style>
+        :host {
+          --animation-duration: var(--kb-animation-duration, 15s);
+          --animation-count: var(--kb-animation-count, 1);
+          --scale-start: var(--kb-scale-start, 1);
+          --scale-end: var(--kb-scale-end, 1);
+          --translate-x-start: var(--kb-translate-x-start, 0px);
+          --translate-y-start: var(--kb-translate-y-start,0px);
+          --translate-x-end: var(--kb-translate-x-end, 0px);
+          --translate-y-end: var(--kb-translate-y-end, 0px);
+          --opacity-start: var(--kb-opacity-start, 0);
+          --animation-fill-mode: var(--kb-animation-fill-mode,none);
+          --animation-timing-function: var(--kb-animation-timing-function,ease-in);
+          --opacity-end: var(--kb-opacity-end, 1);
+          --viewport-width: var(--kb-viewport-width, auto);
+          --viewport-height: var(--kb-viewport-height, auto);
+        }
+        .imgContainer {
+          display: block;
+          background-color: var(--kb-background-color, inherit);
+          will-change: transform;
+          overflow: hidden;
+          border: 2px black;
+          width: var(--viewport-width);
+          height: var(--viewport-height);
+        }
+
+        .run-animation {
+          animation: kenburns var(--animation-duration) var(--animation-timing-function) var(--animation-count) var(--animation-fill-mode);
+        }
+
+        @keyframes kenburns {
+          0% {
+            /*transform: scale(var(--scale-start), var(--scale-start)) translate(calc(var(--translate-x-start) * 1px),calc(var(--translate-y-start) * 1px));*/
+            transform: scale(var(--scale-start), var(--scale-start)) translate(var(--translate-x-start),var(--translate-y-start));
+            opacity: var(--opacity-start);
+          }
+          10% {
+            opacity: 1;
+            animation-timing-function: var(--animation-timing-function);
+          }
+          95% {
+            /*transform: scale(var(--scale-end), var(--scale-end)) translate(calc(var(--translate-x-end) * 1px),calc(var(--translate-y-end) * 1px));*/
+            transform: scale(var(--scale-end), var(--scale-end)) translate(var(--translate-x-end), var(--translate-y-end));
+            animation-timing-function: var(--animation-timing-function);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(var(--scale-end), var(--scale-end)) translate(var(--translate-x-end), var(--translate-y-end));
+            opacity: var(--opacity-end);
+          }
+        }
+      </style>
+      <div class="imgContainer" id="imageContainer">
+        <img id="kbImg" src="{{source}}" />
+      </div>
+  </template>
+
+  <script>
+    /**
+     * `animated-image`
+     * a polymer 2.0 element used panning ann zooming effect
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class AnimatedImage extends Polymer.Element {
+      static get is() { return 'animated-image'; }
+      static get properties() {
+        return {
+          source: {
+            type: String,
+            value: null,
+            // observer: '_sourceChanged'
+          },
+        };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        console.log("KB image ready");
+        var pfx = ["webkit", "moz", "MS", "o", ""];
+        var element = this.$.kbImg;
+        var type = 'AnimationIteration';
+        var that = this;
+        for (var p = 0; p < pfx.length; p++) {
+          if (!pfx[p]) type = type.toLowerCase();
+          element.addEventListener(pfx[p]+type, function () {
+            that.dispatchEvent(new CustomEvent('kb-animation-iteration',{image: that.source}));
+          }, false);
+        }
+        this._sourceChanged();
+      }
+
+      _sourceChanged () {
+        console.log("KB source changed");
+        if (this.source) {
+          this._updateAnimation();
+        }
+      }
+
+      _updateAnimation() {
+        var el = this.$.kbImg;
+        var that = this;
+        el.classList.toggle('run-animation',false);
+        el.classList.toggle('run-animation',true);
+        console.log("KB animation updated " );
+      }
+    }
+
+    window.customElements.define(AnimatedImage.is, AnimatedImage);
+  </script>
+</dom-module>
