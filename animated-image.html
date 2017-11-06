@@ -76,14 +76,135 @@
           source: {
             type: String,
             value: null,
-            // observer: '_sourceChanged'
+            observer: '_sourceChanged'
           },
+          /**
+           *  Can be used to set the width of image viewport (e.g. via binding); size may also be
+           * set via CSS.
+           */
+          viewportWidth: {
+            type: String,
+            value: null,
+            observer: '_widthChanged'
+          },
+          /**
+           *  Can be used to set the height of image viewport (e.g. via binding); size may also be
+           * set via CSS.
+           */
+          viewportHeight: {
+            type: String,
+            value: null,
+            observer: '_heightChanged'
+          },
+          /**
+           *  Can be used to set the animation duration. Default unit if not provided is seconds.
+           */
+          animationDuration: {
+            type: String,
+            value: null,
+            observer: '_durationChanged'
+          },
+          /**
+          * Can be used to set the animation fill mode. Default value if not provided is none.
+          */
+          animationFillMode: {
+            type: String,
+            value: null,
+            observer: '_animationFillModeChanged'
+          },
+
+          /**
+          * Can be used to set the animation fill mode. Default value if not provided is none.
+          */
+          animationTimingFunction: {
+            type: String,
+            value: null,
+            observer: '_animationTimingFunctionChanged'
+          },
+
+          /**
+           *  Can be used to set the animation iteration count.
+           */
+          animationCount: {
+            type: String,
+            value: null,
+            observer: '_countChanged'
+          },
+          /**
+           *  Can be used to set the scale at the start of the animation. Both the x and y axes are scaled the same.
+           */
+          scaleStart: {
+            type: Number,
+            value: null,
+            observer: '_scaleStartChanged'
+          },
+          /**
+           *  Can be used to set the scale at the end of the animation. Both the x and y axes are scaled the same.
+           */
+          scaleEnd: {
+            type: Number,
+            value: null,
+            observer: '_scaleEndChanged'
+          },
+          /**
+           *  Can be used to set the x axis translation that occurs at the start of the animation. The default units if
+           *  not specified is `px`
+           */
+          translateXStart: {
+            type: String,
+            value: null,
+            observer: '_xStartChanged'
+          },
+          /**
+           *  Can be used to set the x axis translation that occurs at the end of the animation. The default units if
+           *  not specified is `px`
+           */
+          translateXEnd: {
+            type: String,
+            value: null,
+            observer: '_xEndChanged'
+          },
+          /**
+           *  Can be used to set the y axis translation that occurs at the start of the animation. The default units if
+           *  not specified is `px`
+           */
+          translateYStart: {
+            type: String,
+            value: null,
+            observer: '_yStartChanged'
+          },
+          /**
+           *  Can be used to set the y axis translation that occurs at the end of the animation. The default units if
+           *  not specified is `px`
+           */
+          translateYEnd: {
+            type: String,
+            value: null,
+            observer: '_yEndChanged'
+          },
+          /**
+           *  Can be used to set the image opacity at the start of the animation. Between 0% and 10% of the animation, the
+           *  opacity transitions from this value to 1.
+           */
+          opacityStart: {
+            type: Number,
+            value: null,
+            observer: '_opacityStartChanged'
+          },
+          /**
+           *  Can be used to set the image opacity at the end of the animation. Between 95% and 100% of the animation, the
+           *  opacity transitions from 1 to this value.
+           */
+          opacityEnd: {
+            type: Number,
+            value: null,
+            observer: '_opacityEndChanged'
+          }
         };
       }
 
       connectedCallback() {
         super.connectedCallback();
-        console.log("KB image ready");
         var pfx = ["webkit", "moz", "MS", "o", ""];
         var element = this.$.kbImg;
         var type = 'AnimationIteration';
@@ -97,21 +218,223 @@
         this._sourceChanged();
       }
 
+      /**
+       * Restarts the animation when the source changes
+       */
       _sourceChanged () {
-        console.log("KB source changed");
         if (this.source) {
           this._updateAnimation();
         }
       }
 
+      /**
+      * update style using custom properties api
+      */
+      changeStyle (styleObject){
+        this.updateStyles(styleObject);
+      }
+
+      /**
+       *  Forces an animation restart by removing and reapplying the animation
+       */
       _updateAnimation() {
         var el = this.$.kbImg;
-        var that = this;
         el.classList.toggle('run-animation',false);
         el.classList.toggle('run-animation',true);
-        console.log("KB animation updated " );
+      }
+
+      /**
+       *  Allows for a manual start of the animation. The animation is automatically started by default.
+       */
+      start() {
+        var el = this.$.kbImg;
+        el.classList.toggle('run-animation',true);
+      }
+
+      /**
+       *  Allows for a manual stop of a running animation. The animation is automatically started by default.
+       */
+      stop() {
+        var el = this.$.kbImg;
+        el.classList.toggle('run-animation',false);
+      }
+
+      /**
+       *  Sets the viewport width CCS custom property
+       */
+      _widthChanged() {
+        if (this.viewportWidth !== null) {
+          var style = isNaN(this.viewportWidth) ? this.viewportWidth : this.viewportWidth + 'px';
+          this.changeStyle({
+            '--viewport-width': style
+          });
+        }
+      }
+
+      /**
+       *  Sets the viewport height CSS custom property
+       */
+      _heightChanged() {
+        if (this.viewportHeight !== null) {
+          var style = isNaN(this.viewportHeight) ? this.viewportHeight : this.viewportHeight + 'px';
+          this.changeStyle({
+            '--viewport-height': style
+          });
+        }
+      }
+
+      /**
+       *  Sets the animation-duration CSS custom property
+       */
+      _durationChanged() {
+        if (this.animationDuration !== null) {
+          var style = isNaN(this.animationDuration) ?  this.animationDuration : this.animationDuration + 's';
+          this.changeStyle({
+              '--animation-duration': style
+            });
+        }
+      }
+
+      /**
+      * Sets the animation-fill-mode CSS custom property
+      */
+      _animationFillModeChanged() {
+        if (this.animationFillMode !== null) {
+          var style = this.animationFillMode.toString();
+          this.changeStyle({
+            '--animation-fill-mode': style
+          });
+        }
+      }
+
+      /**
+      * Sets the animation-timing-function CSS custom property
+      */
+      _animationTimingFunctionChanged() {
+        if (this.animationTimingFunction !== null) {
+          var style = this.animationTimingFunction.toString();
+          this.changeStyle({
+            '--animation-timing-function': style
+          });
+        }
+      }
+
+      /**
+       * Sets the animation-count CSS custom property
+       */
+      _countChanged() {
+        if (this.animationCount !== null) {
+          var style = isNaN(this.animationCount) ? this.animationCount : this.animationCount.toString();
+          this.changeStyle({
+            '--animation-count': style
+          });
+        }
+      }
+
+      /**
+       * Set the scale-start CSS custom property. Must be a dimensionless number
+       */
+      _scaleStartChanged() {
+        if (this.scaleStart !== null && !isNaN(this.scaleStart)) {
+          var style = this.scaleStart.toString();
+          this.changeStyle({
+            '--scale-start': style
+          });
+        }
+      }
+
+      /**
+       *  Sets the scale-end CSS custom property
+       */
+      _scaleEndChanged() {
+        if (this.scaleEnd !== null && !isNaN(this.scaleEnd)) {
+          var style = this.scaleEnd.toString();
+          this.changeStyle({
+            '--scale-end': style
+          });
+        }
+      }
+
+      /**
+       * Sets the translate-x-start CSS custom property
+       */
+      _xStartChanged() {
+        if (this.translateXStart !== null) {
+          var style = isNaN(this.translateXStart) ? this.translateXStart : this.translateXStart + 'px';
+          this.changeStyle({
+            '--translate-x-start': style
+          });
+        }
+      }
+
+      /**
+       * Sets the translate-x-end CSS custom property
+       */
+      _xEndChanged() {
+        if (this.translateXEnd !== null) {
+          var style = isNaN(this.translateXEnd) ? this.translateXEnd : this.translateXEnd + 'px';
+          this.changeStyle({
+            '--translate-x-end': style
+          });
+        }
+      }
+
+      /**
+       * Sets the translate-y-start CSS custom property
+       */
+      _yStartChanged() {
+        if (this.translateYStart !== null) {
+          var style = isNaN(this.translateYStart) ? this.translateYStart : this.translateYStart + 'px';
+          this.changeStyle({
+            '--translate-y-start': style
+          });
+        }
+      }
+
+      /**
+       *  Sets the translate-y-end CSS custom property
+       */
+      _yEndChanged() {
+        if (this.translateYEnd !== null) {
+          var style = isNaN(this.translateYEnd) ? this.translateYEnd : this.translateYEnd + 'px';
+          this.changeStyle({
+            '--translate-y-end': style
+          });
+        }
+      }
+
+      /**
+       *  Sets the opacity-start CSS custom property
+       */
+      _opacityStartChanged() {
+        if (this.opacityStart !== null && !isNaN(this.opacityStart)) {
+          var style = this.opacityStart.toString();
+          this.changeStyle({
+            '--opacity-start': style
+          });
+        }
+      }
+
+      /**
+       * Sets the opacity-end CSS custom property
+       */
+      _opacityEndChanged() {
+        if (this.opacityEnd !== null && !isNaN(this.opacityEnd)) {
+          var style = this.opacityEnd.toString();
+          this.changeStyle({
+            '--opacity-end': style
+          });
+        }
       }
     }
+    /**
+   * Fired when an animation iteration finishes.
+   * This may be useful if you want to switch image sources and /or animation parameters after an animation
+   * cycle completes
+   *
+   * @event kb-animation-iteration
+   * @param {string} source Contains the source image path.
+   */
 
     window.customElements.define(AnimatedImage.is, AnimatedImage);
   </script>

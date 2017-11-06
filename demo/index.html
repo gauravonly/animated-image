@@ -15,34 +15,97 @@
     <custom-style>
       <style is="custom-style" include="demo-pages-shared-styles">
         :root {
-         --kb-viewport-width: 448px;
-         --kb-viewport-height: 300px;
-         --kb-animation-duration: 10s;
          --kb-background-color: black;
-         --kb-scale-start: 2;
-         --kb-scale-end: 1.1;
-         --kb-animation-fill-mode: forwards;
-         --kb-animation-timing-function: ease-in;
-         --kb-translate-x-start: 0px;
-         --kb-translate-y-start: 0px;
-         --kb-translate-x-end: -50px;
-         --kb-translate-y-end: -50px;
          --demo-snippet: {
             min-width: 490px;
             padding: 10px;
           } ;
+        }
+
+        *{
+          select {
+            color: #000;
+            color: rgba(0,0,0,0);
+            text-shadow: 0 0 0 #000;
+          }
+        }
+
+        .start-anime{
+          height:30px;
+          width: auto;
+          padding:8px;
+          cursor:pointer;
+          font-family: sans-serif;
+          margin-top: 10px;
+          background: #98FB98;
+          border: 0px;
+          box-shadow: 3px 4px 12px #888888;
+        }
+        .start-anime:hover{
+          background: #ad4;
+          font-weight:bold;
+        }
+
+        .stop-anime{
+          width:auto;
+          height:30px;
+          padding:8px;
+          cursor:pointer;
+          font-family: sans-serif;
+          margin-top: 10px;
+          background:#fb9898;
+          border: 0px;
+          box-shadow: 3px 4px 12px #888888;
+        }
+
+        .stop-anime:hover{
+          background: #dd4a68;
+          font-weight:bold;
         }
       </style>
     </custom-style>
   </head>
   <body>
     <div class="vertical-section-container centered">
-      <h3>Basic animated-image demo</h3>
+      <h3>Basic animated-image demo 1</h3>
       <demo-snippet>
         <template>
-          <animated-image source="gaurav_profile.jpg"></animated-image>
+          <animated-image source="gaurav_profile.jpg" viewport-width="448px" viewport-height="300px" scale-start="2" scale-end="1.1"
+            animation-fill-mode="forwards" animation-timing-function="ease-in" animation-duration="10s"
+            translate-x-start="0px" translate-y-start="0px" translate-x-end="-50px" translate-y-end="-50px"
+          ></animated-image>
+        </template>
+      </demo-snippet>
+      <h3>Basic animated-image demo 2</h3>
+      <demo-snippet>
+        <template>
+          <animated-image id="animated-image2" source="gaurav_profile.jpg" viewport-width="448px" viewport-height="300px" scale-start="1" scale-end="2"
+            animation-fill-mode="forwards" animation-timing-function="cubic-bezier(0, 3.58, 0.43, -0.59)" animation-duration="10s" animation-count="infinite"
+            translate-x-start="0px" translate-y-start="0px" translate-x-end="10px" translate-y-end="10px"
+          ></animated-image>
+        </template>
+      </demo-snippet>
+      <h3>Basic animated-image demo 3</h3>
+      <demo-snippet>
+        <template>
+          <animated-image  id="animated-image3" source="gaurav_profile.jpg" viewport-width="448px" viewport-height="300px" scale-start="2" scale-end="1"
+            animation-fill-mode="forwards" animation-timing-function="cubic-bezier(0, 3.58, 0.43, -0.59)" animation-duration="10s"
+            opacity-start="0.3" opacity-end="0.6"  translate-x-start="0px" translate-x-end="-10px" translate-y-start="-60px" translate-y-end="-150px"
+          ></animated-image>
+          <button class="start-anime" onclick="startAnimation()"> Start animation</button>
+          <button class="stop-anime" onclick="stopAnimation()"> Stop animation</button>
         </template>
       </demo-snippet>
     </div>
   </body>
+  <script type="text/javascript">
+     function startAnimation(){
+       var el = document.getElementById('animated-image3');
+       el.start();
+     }
+     function stopAnimation(){
+       var el = document.getElementById('animated-image3');
+       el.stop();
+     }
+  </script>
 </html>
